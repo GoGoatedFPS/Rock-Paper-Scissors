@@ -1,97 +1,104 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
-#include <cstdio>
+#include <string>
+
+void displayHeader() {
+    std::cout << "\n=========================================\n";
+    std::cout << "        🎮 Rock-Paper-Scissors 🎮      \n";
+    std::cout << "=========================================\n";
+}
+
+void displayChoices() {
+    std::cout << "\nChoose your move:\n";
+    std::cout << "  1. ✊ Rock\n";
+    std::cout << "  2. 📄 Paper\n";
+    std::cout << "  3. ✌️ Scissors\n";
+    std::cout << "  0. 🚪 Exit Game\n";
+}
+
+std::string choiceToString(int choice) {
+    switch (choice) {
+        case 1: return "Rock";
+        case 2: return "Paper";
+        case 3: return "Scissors";
+        default: return "Invalid";
+    }
+}
+
+void announceResult(int playerChoice, int computerChoice, int& playerScore, int& computerScore, int& draws) {
+    std::cout << "\nYou picked: " << choiceToString(playerChoice) << "\n";
+    std::cout << "Computer picked: " << choiceToString(computerChoice) << "\n";
+    if (playerChoice == computerChoice) {
+        std::cout << "🤝 It's a draw!\n";
+        draws++;
+    } else if ((playerChoice == 1 && computerChoice == 3) || 
+               (playerChoice == 2 && computerChoice == 1) ||
+               (playerChoice == 3 && computerChoice == 2)) {
+        std::cout << "🎉 You win!\n";
+        playerScore++;
+    } else {
+        std::cout << "💻 Computer wins!\n";
+        computerScore++;
+    }
+}
+
+void playGame(int rounds) {
+    int playerScore = 0;
+    int computerScore = 0;
+    int draws = 0;
+    int choice;
+
+    for (int round = 1; round <= rounds; ++round) {
+        std::cout << "\n🔄 Round " << round << ":\n";
+        displayChoices();
+        std::cout << "Enter your choice (1-3 or 0 to exit): ";
+        std::cin >> choice;
+
+        if (choice == 0) {
+            std::cout << "\n👋 Thanks for playing! Final scores: You = " << playerScore << ", Computer = " << computerScore << ", Draws = " << draws << "\n";
+            return;
+        }
+
+        if (choice < 1 || choice > 3) {
+            std::cout << "🚫 Invalid choice. Please select a number between 1 and 3.\n";
+            --round;
+            continue;
+        }
+
+        int computerChoice = std::rand() % 3 + 1;
+        announceResult(choice, computerChoice, playerScore, computerScore, draws);
+        
+        std::cout << "✨ Current scores: You = " << playerScore << ", Computer = " << computerScore << ", Draws = " << draws << "\n";
+    }
+
+    std::cout << "\n🎊 Final scores after " << rounds << " rounds: You = " << playerScore << ", Computer = " << computerScore << ", Draws = " << draws << "\n";
+}
 
 int main() {
+    std::srand(static_cast<unsigned>(std::time(0)));
 
-	int rock = 1;
-	int paper = 2;
-	int scissors = 3;
-	int playerscore = 0;
-	int computerscore = 0;
-	
-	int totalrounds = 5;
-	int choice;
+    while (true) {
+        displayHeader();
+        int rounds;
+        std::cout << "How many rounds would you like to play? ";
+        std::cin >> rounds;
 
-	for (int round = 1; round <= totalrounds; round++) {
-		std::cout << "\nRound " << round << ":\n"; // Display current round number
-		std::cout << "Which one would you like to choose? (You have to type in the number) \n";
-		std::cout << "1.Rock\n";
-		std::cout << "2.Paper\n";
-		std::cout << "3.Scissors\n\n";
-		std::cout << "Your choice is: ";
+        while (rounds <= 0) {
+            std::cout << "⚠️ Please enter a valid number of rounds (greater than 0): ";
+            std::cin >> rounds;
+        }
 
-		std::cin >> choice;
+        playGame(rounds);
 
+        char playAgain;
+        std::cout << "Would you like to play again? (y/n): ";
+        std::cin >> playAgain;
+        if (playAgain != 'y' && playAgain != 'Y') {
+            std::cout << "👋 Thanks for playing! Goodbye!\n";
+            break;
+        }
+    }
 
-
-
-
-		srand(static_cast<unsigned>(time(0)));
-		int computerchoice = rand() % 3 + 1;
-
-
-
-		if (choice == 1) {
-			std::cout << "\nYou picked Rock \n";
-		}
-		else if (choice == 2) {
-			std::cout << "\nYou picked Paper \n";
-		}
-		else if (choice == 3) {
-			std::cout << "\nYou picked Scissors \n";
-		}
-
-
-		std::cout << "\nComputer choice: ";
-
-
-		if (computerchoice == 1) {
-			std::cout << "Rock \n ";
-		}
-		else if (computerchoice == 2) {
-			std::cout << "Paper \n ";
-		}
-		else if (computerchoice == 3) {
-			std::cout << "Scissors \n ";
-		}
-		// comparing for final results
-		if (choice == 1 &&  computerchoice == 3) { // idk how || made the errors go away but i'll take it, its working as intended now
-			std::cout << "\nYou win!\n";
-			playerscore++;
-		}
-		else if (choice == 2 && computerchoice == 1) {
-			std::cout << "\nYou win!\n";
-			playerscore++;
-
-
-		}
-		else if (choice == 3 && computerchoice == 2) {
-			std::cout << "\nYou win!\n";
-			playerscore++;
-
-		}
-		else if (choice == 1 && computerchoice == 1) {
-			std::cout << "\nIt's a draw!\n";
-			playerscore++;
-			computerscore++;
-		}
-		else if (choice == 2 && computerchoice == 2) {
-			std::cout << "\nIt's a draw!\n";
-			playerscore++;
-			computerscore++;
-		}
-		else if (choice == 3 && computerchoice == 3) {
-			std::cout << "\nIt's a draw!\n";
-			playerscore++;
-			computerscore++;
-		}
-		else {
-			std::cout << "\n Computer wins D: \n";
-			computerscore++; }
-		
-	}
-	std::cout << "\nThanks for playing the scores are: You = " << playerscore << ", computer score is: computer = " << computerscore;
-
+    return 0;
 }
